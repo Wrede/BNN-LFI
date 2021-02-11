@@ -14,16 +14,16 @@ There are two exmples included:
 - Moving average of order 2 (MA2)
 - Lotka-volterra (LV), discrete and stochastic population model
 
-Each folder has a couple of jupyter notebooks:
+Each folder has a couple of jupyter notebooks and scripts:
 
 - experiments.ipynb: 
     
-    Running parameter inference experiments using the proposed methodology Bayesian Convolutional NN (BCNN) and using SNPE-C
+    Running parameter inference experiments using the proposed methodology Bayesian Convolutional NN (BCNN), SNPE-C and ABC-SMC
 
 - abc_smc.ipynb:
 
-    Performs ABC-SMC parameter inference
+    More interactive ABC-SMC parameter inference
 
 - plotting.ipynb:
 
-    Plots figure based on the results from above. Obs. that not all figures can be generated due to result dataset not being included in this repository.
+    Plots figure based on the results from above.
