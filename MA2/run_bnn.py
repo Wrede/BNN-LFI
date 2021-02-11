@@ -2,14 +2,15 @@ from bcnn_model import Classifier, inBin, sample_local, sample_local_2D
 from ma2_model import newData, triangle_prior, uniform_prior
 import numpy as np
 import time
+import os
 
-def run_bcnn(total_runs=10, num_generation=6, ID='test', num_bins=3, seed=None, use_thresh=True):
+def run_bnn(total_runs=10, num_generation=6, ID='test', num_bins=3, seed=None, use_thresh=True, thresh=0.05):
     np.random.seed(seed)
     save_folder = ID
     Ndata = 3000 # number of model samples
     num_monte_carlo = 1000 #number of monte carlo smaples of predictive posterior
     batch_size = 256 #batch size in training NN
-    thresh = 0.05 # explotation on resampling, apply threshhold on categorical posterior distribution.
+    #thresh = 0.05 # explotation on resampling, apply threshhold on categorical posterior distribution.
     use_seed = None
     multi_dim = True
     use_small = True
@@ -58,11 +59,11 @@ def run_bcnn(total_runs=10, num_generation=6, ID='test', num_bins=3, seed=None, 
                      split=True, verbose=False, multi_dim=multi_dim, use_small=use_small)
 
             # save model for evaluation
-            if multi_dim:
-                lv_c.model1.save(f'{save_folder}/ma2_run{run}_gen{i}_model_multidim_{ID}')
-            else:
-                lv_c.model1.save(f'{save_folder}/ma2_run{run}_gen{i}_model1_{ID}')
-                lv_c.model2.save(f'{save_folder}/ma2_run{run}_gen{i}_model2_{ID}')
+            #if multi_dim:
+            #    lv_c.model1.save(f'{save_folder}/ma2_run{run}_gen{i}_model_multidim_{ID}')
+            #else:
+            #    lv_c.model1.save(f'{save_folder}/ma2_run{run}_gen{i}_model1_{ID}')
+            #    lv_c.model2.save(f'{save_folder}/ma2_run{run}_gen{i}_model2_{ID}')
 
 
             # resample
@@ -80,4 +81,33 @@ def run_bcnn(total_runs=10, num_generation=6, ID='test', num_bins=3, seed=None, 
         result_posterior.append(theta)
         store_time.append(time_ticks)
     return np.asarray(result_posterior), np.asarray(store_time)
+
+def bnn_experiment():
+    ID = 'data'
+    try:
+        os.mkdir(ID)
+    except FileExistsError:
+        print(f'{ID} folder already exists, continue...')
+        
+    bcnn_post, bcnn_time = run_bnn(total_runs=10, num_generation=6, seed=3, ID=ID, num_bins=4, use_thresh=True)
+    np.save(f'{ID}/bcnn_{ID}_post', bcnn_post)
+    np.save(f'{ID}/bcnn_{ID}_time', bcnn_time)
+
+
+    #Bins experiemnt
+    bcnn_post, bcnn_time = run_bnn(total_runs=10, num_generation=6, seed=3, ID=ID, num_bins=3, use_thresh=True)
+    np.save(f'{ID}/bcnn_{ID}_bins3_post', bcnn_post)
+    bcnn_post, bcnn_time = run_bnn(total_runs=10, num_generation=6, seed=3, ID=ID, num_bins=5, use_thresh=True)
+    np.save(f'{ID}/bcnn_{ID}_bins5_post', bcnn_post)
+
+    #Threshold experiemnt
+    bcnn_post, bcnn_time = run_bnn(total_runs=10, num_generation=6, seed=3, ID=ID, num_bins=5, use_thresh=False)
+    np.save(f'{ID}/bcnn_{ID}_no_thresh_post', bcnn_post)
+
+    #exponential?
+
+
+
+        
+
 

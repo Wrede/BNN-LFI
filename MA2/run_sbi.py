@@ -8,6 +8,7 @@ from sbi.utils.get_nn_models import posterior_nn
 from sbi import utils as utils
 import numpy as np
 import time
+import os
 
 class SummaryNet(nn.Module): 
     
@@ -112,3 +113,14 @@ def run_snpe(total_runs=10, num_generation=6, seed=46, nde='maf'):
         result_posterior.append(theta_store)
         store_time.append(time_ticks)
     return np.asarray(result_posterior), np.asarray(store_time), posteriors
+
+def sbi_experiment():
+    ID = 'data'
+    try:
+        os.mkdir(ID)
+    except FileExistsError:
+        print(f'{ID} folder already exists, continue...')
+
+    sbi_post, sbi_time, sbi_post_object = run_snpe(total_runs=10, num_generation=6, seed=2, nde='maf')
+    np.save(f'{ID}/sbi_{ID}_post', sbi_post)
+    np.save(f'{ID}/sbi_{ID}_time', sbi_time)
