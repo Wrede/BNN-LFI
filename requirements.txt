@@ -1,4 +1,3 @@
-For LV:
 gillespy2: 1.5.4
 numpy: 1.18.5
 logging: 0.5.1.2
@@ -13,3 +12,5 @@ sciope: 0.3
 sbi: 0.14.2
 seaborn 0.11.1
 matplotlib 3.2.2
+Cython==0.29.20
+distributed==2.19.0
