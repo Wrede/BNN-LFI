@@ -1,20 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
 
 #get_ipython().system('pip install -U -e git+https://github.com/rmjiang7/sciope.git@smc_abc#egg=sciope-fork')
 get_ipython().system('pip install -U sciope')
 
 
-# In[17]:
-
-
 import sciope
 
-
-# In[18]:
 
 
 import numpy as np
@@ -36,9 +29,6 @@ from gillespy2 import VariableSSACSolver
 import logging
 logger = logging.getLogger()
 logger.setLevel(logging.ERROR)
-
-
-# In[19]:
 
 
 class lotka_volterra(Model):
@@ -69,7 +59,6 @@ compiled_solver = VariableSSACSolver(model)
 
 # # Data
 
-# In[20]:
 
 
 #target_ts = np.load('target_ts.npy')
@@ -78,15 +67,13 @@ obs_data = np.load('target_original_shape_ts.npy')
 
 # # Prior Distributions
 
-# true = exp([0, -5.8, 0])
 
-# In[5]:
 
 
 theta_true = [0,-5.8,0]
 
 
-# In[21]:
+
 
 
 parameter_names = ['k1', 'k2', 'k3']
@@ -97,8 +84,6 @@ prior_wide = UniformPrior(np.array(lower_bounds_wide), np.array(upper_bounds_wid
 
 
 # # Simulator
-
-# In[22]:
 
 
 # Here we use the GillesPy2 Solver
@@ -134,8 +119,6 @@ def simulator2(x, transform = True):
 
 # ### Identity Statistic and Euclidean Distance
 
-# In[23]:
-
 
 from sciope.utilities.summarystats.identity import Identity
 from sciope.utilities.distancefunctions.euclidean import EuclideanDistance
@@ -156,7 +139,6 @@ distance_func = EuclideanDistance()
 
 # ### Using ABC-SMC
 
-# In[24]:
 
 
 from sciope.inference.smc_abc import SMCABC
@@ -180,8 +162,6 @@ smcabc = SMCABC(obs_data, # Observed Dataset
           )
 
 
-# In[25]:
-
 
 import time
 
@@ -203,8 +183,6 @@ np.save('smcabc_posterior_5gen.npy',smc_abc_gen)
 np.save('smcabc_posterior_5gen_time.npy',time_ticks)
 np.save('smcabc_posterior_5gen_res.npy',res_gen)
 
-
-# In[102]:
 
 
 tot = []

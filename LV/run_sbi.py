@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+
 
 
 import torch
@@ -16,13 +16,10 @@ import numpy as np
 import time
 
 
-# In[3]:
-
 
 from LV_model import loguniform_prior, simulator, lotka_volterra, newData
 
 
-# In[4]:
 
 
 def newData_torch(theta):
@@ -36,8 +33,6 @@ def newData_torch(theta):
         data = data[0,:,:]
     return(torch.tensor(data))
 
-
-# In[5]:
 
 
 from gillespy2 import Model, Species, Reaction, Parameter, RateRule, AssignmentRule, FunctionDefinition
@@ -110,8 +105,6 @@ vilar_model = lotka_volterra()
 solver = VariableSSACSolver(vilar_model)
 
 
-# In[6]:
-
 
 class SummaryNet_large(nn.Module): 
     
@@ -133,7 +126,6 @@ class SummaryNet_large(nn.Module):
         return x
 
 
-# In[7]:
 
 
 class SummaryNet(nn.Module): 
@@ -156,16 +148,15 @@ class SummaryNet(nn.Module):
         return x
 
 
-# In[8]:
 
 
-theta_true = np.log([1.0,0.005, 1.0])
-
-
-# In[12]:
 
 
 def run_snpe(total_runs=10, num_generation=6, seed=46):
+    
+    theta_true = np.log([1.0,0.005, 1.0])
+
+    
     torch.manual_seed(seed)
     num_workers = 16 #for parallel execution of simulations
     Ndata = 1000
@@ -235,8 +226,6 @@ def run_snpe(total_runs=10, num_generation=6, seed=46):
     return np.asarray(result_posterior), np.asarray(store_time), posteriors
 
 
-# In[35]:
-
 
 def count_parameters(model):
     total_params = 0
@@ -249,18 +238,15 @@ def count_parameters(model):
     return total_params
 
 
-# In[44]:
 
 
-total_count = count_parameters(snpe_posteriors[1].net)
-print(f'total parameter count: {total_count}')
 
-
-# In[25]:
-
-
-posterior, times, snpe_posteriors = run_snpe(total_runs=10, num_generation=10, seed=0)
-np.save('SBI_10_10gen_large.npy', snpe_posteriors)
-np.save('SBI_10_10gen_large_sample.npy',posterior)
-np.save('SBI_10_10gen_large_sample_times.npy',times)
+def sbi_experiment():
+    posterior, times, snpe_posteriors = run_snpe(total_runs=10, num_generation=10, seed=0)
+    np.save('SBI_10_10gen_large.npy', snpe_posteriors)
+    np.save('SBI_10_10gen_large_sample.npy',posterior)
+    np.save('SBI_10_10gen_large_sample_times.npy',times)
+    
+    total_count = count_parameters(snpe_posteriors[1].net)
+    print(f'total parameter count: {total_count}')
 

@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
 from LV_model import loguniform_prior, simulator, lotka_volterra, newData
 from bnn_model import LVClassifier, sample_local, sample_local_2D, inBin
 import numpy as np
@@ -11,16 +8,9 @@ import pandas as pd
 import time
 
 
-# In[2]:
 
 
-target_ts = np.load('target_ts.npy')
-
-
-# In[10]:
-
-
-def run_bnn(max_rounds=10,max_gen=10,Ndata=1000,seed=0, multi_dim=False, num_bins=10, thresh=0.0):
+def run_bnn(max_rounds=10,max_gen=10,Ndata=1000,seed=0, multi_dim=False, num_bins=10, thresh=0.0, verbose=False):
     """
     Run the BNN for multiple rounds and multiple generations
     
@@ -85,7 +75,7 @@ def run_bnn(max_rounds=10,max_gen=10,Ndata=1000,seed=0, multi_dim=False, num_bin
             #    num_bins = 10
                 
             lv_c.run(target=target_ts, num_bins=num_bins, batch_size=128, split=True, toload=False,
-                     verbose=False, use_small=use_small, multi_dim=multi_dim)
+                     verbose=verbose, use_small=use_small, multi_dim=multi_dim)
 
             # save model for evaluation
             #lv_c.model1.save(f'lv_gen{i}_model1')
@@ -125,34 +115,22 @@ def run_bnn(max_rounds=10,max_gen=10,Ndata=1000,seed=0, multi_dim=False, num_bin
 
 
 
-# In[8]:
+# test the effect of bins
+def bnn_experiment():
+    bnn_res_5 = run_bnn(max_rounds=5,max_gen=8,Ndata=1000,seed=0, multi_dim=True, num_bins=5,thresh=0.05)
+    np.save('bnn_res_5_5round_8gen_theta_thresh.npy',bnn_res_5['theta'])
+    np.save('bnn_res_5_5round_8gen_time_thresh.npy',bnn_res_5['time'])
 
+    bnn_res_4 = run_bnn(max_rounds=5,max_gen=8,Ndata=1000,seed=0, multi_dim=True, num_bins=4,thresh=0.05)
+    np.save('bnn_res_4_5round_8gen_theta_thresh.npy',bnn_res_4['theta'])
+    np.save('bnn_res_4_5round_8gen_time_thresh.npy',bnn_res_4['time'])
 
-bnn_res_5 = run_bnn(max_rounds=5,max_gen=8,Ndata=1000,seed=0, multi_dim=True, num_bins=5,thresh=0.05)
-np.save('bnn_res_5_5round_8gen_theta_thresh.npy',bnn_res_5['theta'])
-np.save('bnn_res_5_5round_8gen_time_thresh.npy',bnn_res_5['time'])
+    bnn_res_3 = run_bnn(max_rounds=5,max_gen=8,Ndata=1000,seed=0, multi_dim=True, num_bins=3,thresh=0.05)
+    np.save('bnn_res_3_5round_8gen_theta_thresh.npy',bnn_res_3['theta'])
+    np.save('bnn_res_3_5round_8gen_time_thresh.npy',bnn_res_3['time'])
 
+    bnn_res_5_not = run_bnn(max_rounds=5,max_gen=8,Ndata=1000,seed=0, multi_dim=True, num_bins=5,thresh=0.0)
+    np.save('bnn_res_5_5round_8gen_theta.npy',bnn_res_5_not['theta'])
+    np.save('bnn_res_5_5round_8gen_time.npy',bnn_res_5_not['time'])
 
-# In[11]:
-
-
-bnn_res_4 = run_bnn(max_rounds=5,max_gen=8,Ndata=1000,seed=0, multi_dim=True, num_bins=4,thresh=0.05)
-np.save('bnn_res_4_5round_8gen_theta_thresh.npy',bnn_res_4['theta'])
-np.save('bnn_res_4_5round_8gen_time_thresh.npy',bnn_res_4['time'])
-
-
-# In[12]:
-
-
-bnn_res_3 = run_bnn(max_rounds=5,max_gen=8,Ndata=1000,seed=0, multi_dim=True, num_bins=3,thresh=0.05)
-np.save('bnn_res_3_5round_8gen_theta_thresh.npy',bnn_res_3['theta'])
-np.save('bnn_res_3_5round_8gen_time_thresh.npy',bnn_res_3['time'])
-
-
-# In[ ]:
-
-
-bnn_res_5_not = run_bnn(max_rounds=5,max_gen=8,Ndata=1000,seed=0, multi_dim=True, num_bins=5,thresh=0.0)
-np.save('bnn_res_5_5round_8gen_theta.npy',bnn_res_5_not['theta'])
-np.save('bnn_res_5_5round_8gen_time.npy',bnn_res_5_not['time'])
 
