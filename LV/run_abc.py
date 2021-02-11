@@ -4,7 +4,8 @@
 # In[1]:
 
 
-get_ipython().system('pip install -U -e git+https://github.com/rmjiang7/sciope.git@smc_abc#egg=sciope-fork')
+#get_ipython().system('pip install -U -e git+https://github.com/rmjiang7/sciope.git@smc_abc#egg=sciope-fork')
+get_ipython().system('pip install -U sciope')
 
 
 # In[17]:

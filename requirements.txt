@@ -1,0 +1,6 @@
+For LV:
+*all*: numpy, gillespy2, dask, time
+*run_abc*: sciope,
+*run_bnn*: pandas, pickle, absl, tensorflow.compat.v2, tensorflow_probability, scipy, sklearn 
+*run_sbi*: torch, sbi
+*plotting*: matplotlib, seaborn

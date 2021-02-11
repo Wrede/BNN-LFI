@@ -12,7 +12,6 @@ tfd = tfp.distributions
 
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-import seaborn as sb
 
 from sklearn.model_selection import train_test_split 
 
