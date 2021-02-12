@@ -394,13 +394,13 @@ def sample_local_2D(probs, bins, num_samples=1000, use_thresh=False, thresh=0.1)
 
 # Given bins, find data inside of bins
 def inBin(data, thetaOld, thetaNew):
-  flag = None
-  for j in range(thetaNew.shape[1]):
-    flag_max = (thetaOld[:,j] < max(thetaNew[:,j]))
-    flag_min = (thetaOld[:,j] > min(thetaNew[:,j]))
-    if j > 0:
-      flag = flag & flag_max & flag_min
-    else:
-      flag = flag_max & flag_min
+    flag = None
+    for j in range(thetaNew.shape[1]):
+        flag_max = (thetaOld[:,j] < max(thetaNew[:,j]))
+        flag_min = (thetaOld[:,j] > min(thetaNew[:,j]))
+        if j > 0:
+            flag = flag & flag_max & flag_min
+        else:
+            flag = flag_max & flag_min
   
-  return data[flag,:,:], thetaOld[flag,:]
+    return data[flag,:,:], thetaOld[flag,:]

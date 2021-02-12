@@ -19,6 +19,8 @@ import time
 
 from LV_model import loguniform_prior, simulator, lotka_volterra, newData
 
+from gillespy2 import Model, Species, Reaction, Parameter, RateRule, AssignmentRule, FunctionDefinition
+from gillespy2 import VariableSSACSolver
 
 
 
@@ -35,8 +37,7 @@ def newData_torch(theta):
 
 
 
-from gillespy2 import Model, Species, Reaction, Parameter, RateRule, AssignmentRule, FunctionDefinition
-from gillespy2 import VariableSSACSolver
+
 
 class lotka_volterra(Model):
     def __init__(self, parameter_values=None):
