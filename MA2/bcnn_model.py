@@ -44,6 +44,33 @@ def sample_local_2D(probs, bins, num_samples=1000, use_thresh=False, thresh=0.1)
         samples[e] = np.array([u1,u2])
     return samples, samples_bins.numpy()
 
+def sample_local_2D_adaptive(probs, bins, num_samples=1000, use_thresh=False, thresh=0.8):
+    probs_pred = tf.reduce_mean(tf.math.log(probs), axis=0).numpy()
+    print(probs_pred.shape)
+    if use_thresh:
+        argsort = np.argsort(probs_pred)[0]
+        max_remove = int(np.ceil((1-thresh)*probs_pred.shape[1]))
+        probs_pred[:,argsort[:max_remove]] = -np.inf
+        probs_pred = probs_pred - np.log(np.sum(np.exp(probs_pred))) 
+
+    dist = tfd.Categorical(
+    logits=probs_pred, probs=None, dtype=tf.int32, validate_args=True,
+    allow_nan_stats=False, name='Categorical')
+
+    samples_bins = dist.sample(num_samples)
+    print(samples_bins.shape)
+    samples = np.empty((num_samples,2))
+    for e,i in enumerate(samples_bins):
+        interval = bins[i.numpy()[0]]
+        u1 = np.random.uniform(interval[0].left, interval[0].right)
+        u2 = np.random.uniform(interval[1].left, interval[1].right)
+        samples[e] = np.array([u1,u2])
+    return samples, samples_bins.numpy()
+
+def exp_adaptive_thresh(start_thresh, growth, rounds):
+    adaptive_thresh = start_thresh + (1 - start_thresh)/rounds**growth*np.arange(1,rounds+1)**growth
+    return adaptive_thresh
+
 def inBin(data, thetaOld, thetaNew):
     flag = None
     for j in range(thetaNew.shape[1]):

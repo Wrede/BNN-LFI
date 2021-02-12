@@ -1,16 +1,18 @@
-from bcnn_model import Classifier, inBin, sample_local, sample_local_2D
+from bcnn_model import Classifier, inBin, sample_local, sample_local_2D, sample_local_2D_adaptive, exp_adaptive_thresh
 from ma2_model import newData, triangle_prior, uniform_prior
 import numpy as np
 import time
 import os
 
-def run_bnn(total_runs=10, num_generation=6, ID='test', num_bins=3, seed=None, use_thresh=True, thresh=0.05):
+def run_bnn(total_runs=10, num_generation=6, ID='test', num_bins=3, seed=None, use_thresh=True, adaptive=False, thresh=0.05):
     np.random.seed(seed)
     save_folder = ID
     Ndata = 3000 # number of model samples
-    num_monte_carlo = 1000 #number of monte carlo smaples of predictive posterior
+    num_monte_carlo = 1000 #number of monte carlo samples of predictive posterior
     batch_size = 256 #batch size in training NN
     #thresh = 0.05 # explotation on resampling, apply threshhold on categorical posterior distribution.
+    if adaptive:
+        adaptive_thresh = exp_adaptive_thresh(0.5, 5, num_generation)
     use_seed = None
     multi_dim = True
     use_small = True
@@ -68,8 +70,12 @@ def run_bnn(total_runs=10, num_generation=6, ID='test', num_bins=3, seed=None, u
 
             # resample
             if multi_dim:
-                new_samples, new_bins = sample_local_2D(lv_c.probs1, lv_c.multidim_bins, num_samples=Ndata, use_thresh=use_local_tresh, thresh=thresh)
-                theta.append(new_samples)
+                if adaptive:
+                    new_samples, new_bins = sample_local_2D_adaptive(lv_c.probs1, lv_c.multidim_bins, num_samples=Ndata, use_thresh=use_local_tresh, thresh=adaptive_thresh[i])
+                    theta.append(new_samples)
+                else:
+                    new_samples, new_bins = sample_local_2D(lv_c.probs1, lv_c.multidim_bins, num_samples=Ndata, use_thresh=use_local_tresh, thresh=thresh)
+                    theta.append(new_samples)
 
             else: 
                 new_rate1, new_bins1 = sample_local(lv_c.probs1, lv_c.bins_rate1, num_samples=Ndata, use_thresh=use_local_tresh, thresh=thresh)
@@ -88,6 +94,10 @@ def bnn_experiment():
         os.mkdir(ID)
     except FileExistsError:
         print(f'{ID} folder already exists, continue...')
+
+    #exponential threshold
+    bcnn_post, bcnn_time = run_bnn(total_runs=10, num_generation=6, seed=3, ID=ID, num_bins=4, adaptive=True, use_thresh=True)
+    np.save(f'{ID}/bcnn_{ID}_exp_thresh_post', bcnn_post)
         
     bcnn_post, bcnn_time = run_bnn(total_runs=10, num_generation=6, seed=3, ID=ID, num_bins=4, use_thresh=True)
     np.save(f'{ID}/bcnn_{ID}_post', bcnn_post)
@@ -101,10 +111,9 @@ def bnn_experiment():
     np.save(f'{ID}/bcnn_{ID}_bins5_post', bcnn_post)
 
     #Threshold experiemnt
-    bcnn_post, bcnn_time = run_bnn(total_runs=10, num_generation=6, seed=3, ID=ID, num_bins=5, use_thresh=False)
+    bcnn_post, bcnn_time = run_bnn(total_runs=10, num_generation=6, seed=3, ID=ID, num_bins=4, use_thresh=False)
     np.save(f'{ID}/bcnn_{ID}_no_thresh_post', bcnn_post)
 
-    #exponential?
 
 
 
